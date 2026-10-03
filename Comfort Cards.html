@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Comfort Cards</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#eef2f3;--panel:#fff;--ink:#14232b;--mute:#5f7078;--line:#d6dfe2;--acc:#2d6a70;--stage:#17323a;--stage-ink:#eaf3f2;--stage-mute:#9db8bb;--sans:'Figtree',system-ui,-apple-system,'Segoe UI',sans-serif;--serif:'Newsreader',Georgia,'Times New Roman',serif;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e181d;--panel:#152229;--ink:#e6eff0;--mute:#97aab0;--line:#25363e;--acc:#6fb5ba;--stage:#1b3b44;--stage-ink:#eef6f5;--stage-mute:#98b9bd}}
+:root[data-theme="dark"]{--bg:#0e181d;--panel:#152229;--ink:#e6eff0;--mute:#97aab0;--line:#25363e;--acc:#6fb5ba;--stage:#1b3b44;--stage-ink:#eef6f5;--stage-mute:#98b9bd}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:44px 22px 56px}
+header{margin-bottom:34px;max-width:560px}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(2rem,5vw,2.9rem);line-height:1.1;margin:0 0 10px;letter-spacing:-.01em}
+header p{margin:0;color:var(--mute);font-size:1.02rem}
+.layout{display:grid;gap:30px;grid-template-columns:1fr}
+@media(min-width:880px){.layout{grid-template-columns:260px 1fr;gap:44px}}
+h2{font-size:.95rem;font-weight:600;margin:0 0 12px}
+.moods{display:flex;flex-direction:column;gap:2px;margin:0;padding:0;list-style:none}
+@media(max-width:879px){.moods{flex-direction:row;flex-wrap:wrap;gap:8px}}
+.moods button{width:100%;text-align:left;font:inherit;color:var(--ink);background:none;border:0;border-left:2px solid var(--line);padding:9px 14px;cursor:pointer;transition:background .2s,border-color .2s}
+.moods button small{display:block;color:var(--mute);font-size:.82rem}
+.moods button:hover{background:var(--panel)}
+.moods button[aria-pressed="true"]{border-left-color:var(--acc);background:var(--panel);font-weight:600}
+@media(max-width:879px){.moods button{border:1px solid var(--line);border-radius:8px;width:auto;padding:8px 13px}.moods button small{display:none}.moods button[aria-pressed="true"]{border-color:var(--acc)}}
+button:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.stage{background:var(--stage);color:var(--stage-ink);border-radius:6px;padding:clamp(26px,5vw,48px);min-height:290px;display:flex;flex-direction:column;justify-content:space-between}
+.stage blockquote{margin:0;font-family:var(--serif);font-size:clamp(1.45rem,3.6vw,2.2rem);line-height:1.3;font-weight:400;max-width:30ch;transition:opacity .35s}
+.stage blockquote.out{opacity:0}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:30px;color:var(--stage-mute);font-size:.88rem}
+.bar .ctl{display:flex;gap:8px}
+.bar button{font:inherit;font-size:.9rem;color:var(--stage-ink);background:transparent;border:1px solid rgba(234,243,242,.35);padding:8px 14px;border-radius:6px;cursor:pointer;transition:background .2s}
+.bar button:hover{background:rgba(255,255,255,.12)}
+.sec{margin-top:34px}
+.song{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.song .t{flex:1;min-width:0}
+.song b{display:block;font-weight:600}
+.song span{color:var(--mute);font-size:.88rem}
+.song a,.song button{font:inherit;font-size:.86rem;padding:7px 13px;border-radius:6px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.song a{color:var(--ink);border:1px solid var(--line);background:var(--panel)}
+.song a:hover{border-color:var(--acc)}
+.song button{color:var(--acc);border:1px solid var(--acc);background:none}
+.song button[aria-pressed="true"]{background:var(--acc);color:var(--bg)}
+.empty{color:var(--mute);font-size:.92rem;margin:0}
+footer{margin-top:46px;padding-top:18px;border-top:1px solid var(--line);color:var(--mute);font-size:.85rem;max-width:620px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Comfort Cards</h1>
+    <p>Short, gentle reminders and songs you can play on Spotify, for the days that feel heavy.</p>
+  </header>
+  <div class="layout">
+    <nav aria-label="Mood">
+      <h2>How are you feeling today?</h2>
+      <ul class="moods" id="moods"></ul>
+    </nav>
+    <main>
+      <section class="stage" aria-live="polite">
+        <blockquote id="quote"></blockquote>
+        <div class="bar">
+          <span id="count"></span>
+          <div class="ctl">
+            <button id="prev">Previous</button>
+            <button id="next">Next</button>
+            <button id="copy">Copy</button>
+          </div>
+        </div>
+      </section>
+      <section class="sec">
+        <h2>Comfort songs</h2>
+        <div id="songs"></div>
+      </section>
+      <section class="sec">
+        <h2 id="mineH">My picks</h2>
+        <div id="mine"></div>
+      </section>
+    </main>
+  </div>
+  <footer>If what you feel is too heavy to carry, you are not alone. Talk to someone you trust, or call the NCMH Crisis Hotline at 1553 (Philippines).</footer>
+</div>
+<script>
+const D={
+"Sad":{d:"Heavy heart",cards:["Okay lang to cry, bes. Hindi ka weak, tao ka lang na nakakaramdam.","Hindi forever ang ulan. For now, rest ka muna and let the sadness pass.","Ang bigat ng day na 'to, pero nakaraos ka pa rin. I'm so proud of you.","Valid yang nararamdaman mo. You don't have to rush to be okay."],songs:[["Kathang Isip","Ben&Ben"],["Fix You","Coldplay"],["Tadhana","Up Dharma Down"]]},
+"Tired":{d:"Need a break",cards:["You're allowed to rest. Hindi mo kailangang i-earn ang pahinga.","Hindi ka tamad, napagod ka lang. Big difference 'yon.","One thing at a time lang. Hindi mo kailangang tapusin lahat today.","Drink water, kain ka, tapos higa ka saglit. You deserve it."],songs:[["Here Comes the Sun","The Beatles"],["Lean on Me","Bill Withers"],["Pagtingin","Ben&Ben"]]},
+"Overthinking":{d:"Too much on your mind",cards:["Breathe muna: in sa nose, out sa mouth. Ulitin mo ng three times.","Hindi lahat ng iniisip mo ay totoo. Minsan, noise lang 'yan ng pagod na brain.","Focus ka lang sa next small step. Yun lang muna, okay na.","Hindi mo kailangang masagot lahat tonight. Bukas na 'yan, promise."],songs:[["Mundo","IV of Spades"],["Three Little Birds","Bob Marley & The Wailers"],["Weightless","Marconi Union"]]},
+"Lonely":{d:"Feeling on your own",cards:["Kahit feeling mo mag-isa ka, may mga taong love ka talaga. One message lang ang layo nila.","Hindi ka burden. Never ka naging burden.","Okay lang mag-reach out. Walang masama sa pag-ask ng hug, kahit virtual pa.","I'm here with you right now. And sana, kasama mo rin ang sarili mo."],songs:[["Hawak Kamay","Yeng Constantino"],["Count on Me","Bruno Mars"],["You've Got a Friend","James Taylor"]]},
+"Anxious":{d:"Nervous or on edge",cards:["Normal lang ang kabahan. It just means mahalaga sa'yo 'to.","Kaya mo 'to. Hindi perfect, pero kaya, and that's enough.","Isipin mo lahat ng nakaya mo na dati. Dala mo pa rin ang strength na 'yon ngayon.","Take it one step at a time. Bahala na si future you, kakayanin niya 'yan."],songs:[["Unwritten","Natasha Bedingfield"],["Walking on Sunshine","Katrina & The Waves"],["Maybe the Night","Ben&Ben"]]},
+"Heartbroken":{d:"Hurting after a loss",cards:["Masakit kasi totoo ang pagmamahal mo. Hindi 'yon kasalanan.","You don't have to rush to move on. Gagaling ka at your own pace.","Hindi ka kulang. You deserve a love na hindi mo kailangang pagdudahan.","Okay lang maging sad today, pero hindi dito matatapos ang story mo."],songs:[["Binibini","Zack Tabudlo"],["Sa Hindi Pagtuloy","December Avenue"],["Someone Like You","Adele"]]}
+};
+const keys=Object.keys(D);let cur=keys[0],i=0,saved=[];
+const $=id=>document.getElementById(id);
+const sp=(t,a)=>'https://open.spotify.com/search/'+encodeURIComponent(t+' '+a);
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+function moods(){$('moods').innerHTML=keys.map(k=>`<li><button data-k="${esc(k)}" aria-pressed="${k===cur}">${k}<small>${D[k].d}</small></button></li>`).join('')}
+function row(s,toggle){const on=saved.some(x=>x[0]===s[0]);return `<div class="song"><div class="t"><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div><a href="${sp(s[0],s[1])}" target="_blank" rel="noopener">Open in Spotify</a>${toggle?`<button data-s="${esc(s[0])}" aria-pressed="${on}">${on?'Added':'Add'}</button>`:''}</div>`}
+function songs(){$('songs').innerHTML=D[cur].songs.map(s=>row(s,true)).join('');
+  $('mineH').textContent='My picks'+(saved.length?' ('+saved.length+')':'');
+  $('mine').innerHTML=saved.length?saved.map(s=>row(s,false)).join(''):'<p class="empty">Nothing here yet. Select "Add" on a song to save it to this list.</p>'}
+function card(n,anim){const d=D[cur].cards,q=$('quote');i=(n+d.length)%d.length;
+  const set=()=>{q.textContent=d[i];$('count').textContent=(i+1)+' of '+d.length;q.classList.remove('out')};
+  if(anim){q.classList.add('out');setTimeout(set,300)}else set()}
+$('moods').onclick=e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.k;moods();songs();card(0,true)};
+$('next').onclick=()=>card(i+1,true);
+$('prev').onclick=()=>card(i-1,true);
+$('copy').onclick=()=>{const b=$('copy');try{navigator.clipboard.writeText($('quote').textContent);b.textContent='Copied'}catch(e){b.textContent='Copy failed'}setTimeout(()=>b.textContent='Copy',1500)};
+$('songs').onclick=e=>{const b=e.target.closest('button');if(!b)return;const s=b.dataset.s,k=saved.findIndex(x=>x[0]===s);if(k>-1)saved.splice(k,1);else saved.push(D[cur].songs.find(x=>x[0]===s));songs()};
+moods();songs();card(Math.floor(Math.random()*4),false);
+</script>
+</body>
+</html>
